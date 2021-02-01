@@ -23,6 +23,9 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <getopt.h>
+#include <time.h>
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -59,8 +62,8 @@ int
 main(int argc, char *argv[])
 {
 	char c;
-	boolean_t resolve = B_TRUE;
-	boolean_t haveport = B_FALSE;
+	bool resolve = true;
+	bool haveport = false;
 	uint16_t port;
 	int rv;
 	dnc_t dnc;
@@ -77,11 +80,11 @@ main(int argc, char *argv[])
 			break;
 
 		case 'n':
-			resolve = B_FALSE;
+			resolve = false;
 			break;
 
 		case 'p':
-			haveport = B_TRUE;
+			haveport = true;
 			if (dnc_port_parse(optarg, &port) != 0) {
 				warnx("invalid TCP port: %s\n", optarg);
 				dnc_usage();
@@ -341,7 +344,7 @@ dnc_connection(dnc_t *dncp, int sock)
 			}
 
 			if (nwritten != nread) {
-				warnx("short write: expected %d, wrote %d",
+				warnx("short write: expected %ld, wrote %ld",
 				    nread, nwritten);
 				return (-1);
 			}
